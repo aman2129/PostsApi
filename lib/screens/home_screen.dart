@@ -42,7 +42,7 @@ class _PostsScreenState extends State<PostsScreen> {
             onPressed: () {
               logoutDialogBox(context);
             },
-            icon: Icon(Icons.logout),
+            icon: const Icon(Icons.logout),
           )
         ],
       ),

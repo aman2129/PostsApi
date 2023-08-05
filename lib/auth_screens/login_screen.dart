@@ -3,6 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:posts/animations/route_animation.dart';
 import 'package:posts/auth_screens/register_screen.dart';
+import 'package:posts/auth_screens/verify_email_view.dart';
+
+import 'error_dialog_view.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -138,23 +141,48 @@ class _LoginScreenState extends State<LoginScreen> {
                             borderRadius: BorderRadius.circular(15.0))),
                     onPressed: () async {
                       if (_key.currentState!.validate()) {
-                        setState(() {
-                          isLoading = true;
-                        });
-                        final String email = _email.text;
-                        final String password = _password.text;
-                        await firebaseAuth.signInWithEmailAndPassword(
-                          email: email,
-                          password: password,
-                        );
-                        await Future.delayed(const Duration(seconds: 2), () {
+                        try {
                           setState(() {
-                            isLoading = false;
+                            isLoading = true;
                           });
-                        });
-                        await Navigator.of(context)
-                          .pushAndRemoveUntil(RouteAnimation()
-                              .createPostsRoute(), (route) => false);
+                          final String email = _email.text;
+                          final String password = _password.text;
+                          await firebaseAuth.signInWithEmailAndPassword(
+                            email: email,
+                            password: password,
+                          );
+                          await Future.delayed(const Duration(seconds: 2),
+                                  () {
+                                setState(() {
+                                  isLoading = false;
+                                });
+                              });
+                          final user = FirebaseAuth.instance.currentUser;
+                          if (user!.emailVerified) {
+                            await Navigator.of(context).pushReplacement(
+                                RouteAnimation().createPostsRoute());
+                          } else {
+                            await user.sendEmailVerification();
+                            Navigator.of(context).pushAndRemoveUntil(
+                                MaterialPageRoute(
+                                    builder: (context) => const VerifyEmailView()),
+                                    (route) => false);
+                          }
+                        } on FirebaseAuthException catch (e) {
+                          if (e.code == 'user-not-found') {
+                            await showErrorDialog(
+                                context, 'User not Found');
+                            setState(() {
+                              isLoading = false;
+                            });
+                          } else if (e.code == 'wrong-password') {
+                            await showErrorDialog(
+                                context, 'Wrong password');
+                            setState(() {
+                              isLoading = false;
+                            });
+                          }
+                        }
                       }
                     },
                     child: isLoading

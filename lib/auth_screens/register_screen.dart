@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:posts/animations/route_animation.dart';
+import 'error_dialog_view.dart';
 import 'login_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -129,25 +130,49 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             borderRadius: BorderRadius.circular(15.0))),
                     onPressed: () async {
                       if (_key.currentState!.validate()) {
-                        setState(() {
-                          isLoading = true;
-                        });
-                        final String email = _email.text;
-                        final String password = _password.text;
-                        await firebaseAuth.createUserWithEmailAndPassword(
-                          email: email,
-                          password: password,
-                        );
-                        FirebaseAuth.instance.currentUser
-                            ?.sendEmailVerification();
-                        Future.delayed(const Duration(seconds: 2), () {
+                        try {
                           setState(() {
-                            isLoading = false;
+                            isLoading = true;
                           });
-                        });
-                        Navigator.of(context).pushAndRemoveUntil(
-                            RouteAnimation().createLoginRoute(),
-                            (route) => false);
+                          final String email = _email.text;
+                          final String password = _password.text;
+                          await firebaseAuth.createUserWithEmailAndPassword(
+                            email: email,
+                            password: password,
+                          );
+                          FirebaseAuth.instance.currentUser
+                              ?.sendEmailVerification();
+                          Future.delayed(const Duration(seconds: 2), () {
+                            setState(() {
+                              isLoading = false;
+                            });
+                          });
+                          await Navigator.of(context).pushReplacement(
+                              RouteAnimation().createVerifyEmailRoute());
+                        } on FirebaseAuthException catch (e) {
+                          if (e.code == 'weak-password') {
+                            await showErrorDialog(context, 'Weak password');
+                            setState(() {
+                              isLoading = false;
+                            });
+                          } else if (e.code == 'email-already-in-use') {
+                            await showErrorDialog(
+                                context, 'Email already in use');
+                            setState(() {
+                              isLoading = false;
+                            });
+                          } else if (e.code == 'invalid-email') {
+                            await showErrorDialog(context, 'Invalid email');
+                            setState(() {
+                              isLoading = false;
+                            });
+                          } else {
+                            await showErrorDialog(context, e.code);
+                            setState(() {
+                              isLoading = false;
+                            });
+                          }
+                        }
                       }
                     },
                     child: isLoading

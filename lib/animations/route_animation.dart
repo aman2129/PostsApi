@@ -5,6 +5,8 @@ import 'package:posts/screens/add_posts_screen.dart';
 import 'package:posts/screens/details_screen.dart';
 import 'package:posts/screens/home_screen.dart';
 
+import '../auth_screens/verify_email_view.dart';
+
 
 class RouteAnimation {
   Route createAddPostsRoute() {
@@ -71,6 +73,26 @@ class RouteAnimation {
     return PageRouteBuilder(
       pageBuilder: (context, animation, secondaryAnimation) =>
           const LoginScreen(),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        const begin = Offset(1.0, 0.0);
+        const end = Offset.zero;
+        const curve = Curves.ease;
+
+        var tween =
+        Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+        return SlideTransition(
+          position: animation.drive(tween),
+          child: child,
+        );
+      },
+    );
+  }
+
+  Route createVerifyEmailRoute() {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) =>
+      const VerifyEmailView(),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         const begin = Offset(1.0, 0.0);
         const end = Offset.zero;
