@@ -1,16 +1,11 @@
 # posts
 
-A new Flutter project.
+A Flutter project called Posts.
 
-## Getting Started
+   It is 
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+1. The app has a basic login screen where the user can register or log in via email and password using Firebase authentication. 
+2. Home screen to fetch and display a list of data that comes from JSONPlaceholder. The data is displayed in a list view.
+3. We can post new data to the API.
+4. Upon tapping an item on the list, the app navigates to a details screen that presents more information about that item.
+5. The app caches the data so that it can still display information even if it goes offline.
