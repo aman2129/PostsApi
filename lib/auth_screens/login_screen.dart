@@ -76,24 +76,21 @@ class _LoginScreenState extends State<LoginScreen> {
                     fillColor: Colors.white70,
                     filled: true,
                     hintText: 'Enter valid email',
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(15.0),
+                    border: OutlineInputBorder(
                       borderSide: const BorderSide(
-                        color: Colors.blue,
+                        color: Colors.lightBlueAccent,
                       ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15.0),
-                      borderSide: const BorderSide(
-                        color: Colors.black,
-                      ),
                     ),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Email required';
+                    } else if (!value.contains('@') && !value.contains('.')){
+                      return 'Enter valid email';
+                    }else {
+                      return null;
                     }
-                    return null;
                   },
                   enableSuggestions: true,
                   keyboardType: TextInputType.emailAddress,
@@ -107,17 +104,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     fillColor: Colors.white70,
                     filled: true,
                     hintText: 'Enter password',
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(15.0),
+                    border: OutlineInputBorder(
                       borderSide: const BorderSide(
-                        color: Colors.blue,
+                        color: Colors.lightBlueAccent,
                       ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15.0),
-                      borderSide: const BorderSide(
-                        color: Colors.black,
-                      ),
                     ),
                   ),
                   validator: (value) {
